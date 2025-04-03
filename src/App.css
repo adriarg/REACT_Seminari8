@@ -1,28 +1,156 @@
-.App {
-    padding: 20px;
-    text-align: center;
-    min-height: 100vh;
-    transition: background-color 0.3s ease, color 0.3s ease;
+/* Estilos generales */
+ion-content {
+  --background: var(--ion-background-color);
+  --padding-top: 16px;
+  --padding-bottom: 16px;
 }
 
-.content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+/* Colores personalizados de Ionic */
+:root {
+  --ion-color-primary: #7a36e3;
+  --ion-color-primary-rgb: 122, 54, 227;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #6b30c8;
+  --ion-color-primary-tint: #874be6;
+
+  --ion-color-tertiary: #9c36e3;
+  --ion-color-tertiary-rgb: 156, 54, 227;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #8930c8;
+  --ion-color-tertiary-tint: #a64be6;
 }
 
-.toggleButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease;
+/* Mejorar la presentación de los elementos */
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 16px;
+  --border-radius: 8px;
+  margin-bottom: 8px;
 }
 
-.toggleButton:hover {
-    background-color: #0056b3;
+ion-card {
+  margin: 16px 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+ion-card-header {
+  padding-bottom: 8px;
+}
+
+ion-card-content {
+  padding-top: 0;
+}
+
+ion-label {
+  margin: 8px 0;
+}
+
+ion-list {
+  background: transparent;
+  padding: 8px 0;
+}
+
+ion-avatar {
+  --border-radius: 12px;
+  background-color: rgba(122, 54, 227, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+ion-badge {
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+ion-toolbar {
+  --border-width: 0;
+  --background: var(--ion-color-primary);
+}
+
+ion-toolbar ion-title {
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0 16px;
+}
+
+ion-button {
+  --border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Separación entre elementos */
+.ion-margin-bottom {
+  margin-bottom: 16px;
+}
+
+.ion-margin-top {
+  margin-top: 16px;
+}
+
+.ion-margin-end {
+  margin-right: 6px;
+}
+
+/* Estilos para modo oscuro */
+.dark-theme {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+  --ion-border-color: #222222;
+  --ion-card-background: #1e1e1e;
+}
+
+.dark-theme ion-toolbar {
+  --background: #1f1f1f;
+  --color: white;
+}
+
+.dark-theme ion-item {
+  --background: #1f1f1f;
+}
+
+.dark-theme ion-avatar {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilo para el formulario */
+form {
+  padding: 8px 0;
+}
+
+/* Ajustes para inputs */
+ion-input {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-top: 4px;
+}
+
+/* Animaciones */
+ion-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+ion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+ion-item-sliding {
+  transition: all 0.3s ease;
+}
+
+ion-item-sliding:hover ion-item {
+  --background: rgba(122, 54, 227, 0.05);
 }

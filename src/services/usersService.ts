@@ -1,29 +1,38 @@
-import axios from 'axios';
 import { User } from '../types';
+
+// Array simulat d'usuaris
+let users: User[] = [
+  {
+    name: "Jordi Pujol",
+    age: 34,
+    email: "jordi.pujol@exemple.cat"
+  },
+  {
+    name: "Anna Martí",
+    age: 27,
+    email: "anna.marti@gmail.com"
+  }
+];
 
 // Fetch all users
 export const fetchUsers = async (): Promise<User[]> => {
-    try {
-        const response = await axios.get<User[]>('http://localhost:9000/api/Users');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        throw error;
-    }
+  // Simulate network delay
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([...users]);
+    }, 500);
+  });
 };
 
 // Add a new user
 export const addUser = async (newUser: User): Promise<User> => {
-    try {
-        const response = await axios.post<User>('http://localhost:9000/api/Users', newUser);
-        if (response.status !== 200 && response.status !== 201) {
-            throw new Error('Failed to add user');
-        }
-        return response.data;
-    } catch (error) {
-        console.error('Error adding user:', error);
-        throw error; 
-    }
+  // Simulate network delay
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      users.push(newUser);
+      resolve(newUser);
+    }, 500);
+  });
 };
 
 /* 

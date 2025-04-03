@@ -1,7 +1,32 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import { User } from '../../types';
-import styles from './Form.module.css';
-import { addUser } from '../../services/usersService'; // Import CSS module
+import { addUser } from '../../services/usersService';
+import { 
+    IonCard, 
+    IonCardHeader, 
+    IonCardTitle, 
+    IonCardContent,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonToast,
+    IonText
+} from '@ionic/react';
+
+import {
+    personAdd,
+    mailOutline,
+    todayOutline,
+    saveOutline,
+    refreshOutline,
+    checkmarkCircle,
+    alertCircle
+} from 'ionicons/icons';
 
 interface FormState {
     inputValues: User;
@@ -19,7 +44,7 @@ const INITIAL_STATE = {
 
 type FormReducerAction = {
     type: "change_value", 
-    payload: { inputName: string, inputValue: string };
+    payload: { inputName: string, inputValue: string | number };
 } | {
     type: "clear";
 };
@@ -39,32 +64,46 @@ const formReducer = (state: FormState["inputValues"], action: FormReducerAction)
     }
 };
 
-const Form = ({ onNewUser: onNewUser }: FormProps) => {
+const Form = ({ onNewUser }: FormProps) => {
     const [inputValues, dispatch] = useReducer(formReducer, INITIAL_STATE);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('success');
 
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
         if (!inputValues.name || !inputValues.age || !inputValues.email) {
-            alert('Please fill out all fields.');
+            setToastMessage('Si us plau, completa tots els camps');
+            setToastColor('danger');
+            setShowToast(true);
             return;
         }
+        
         try {
             const addedUser = await addUser(inputValues);
             onNewUser(addedUser);
             handleClear();
+            setToastMessage('Usuari afegit amb èxit!');
+            setToastColor('success');
+            setShowToast(true);
         } catch (error) {
-            console.error('Error submitting form:', error);
+            console.error('Error al enviar formulari:', error);
+            setToastMessage('Error al guardar l\'usuari');
+            setToastColor('danger');
+            setShowToast(true);
         }
     };
 
-    const handleChange = (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        dispatch({
-            type: "change_value",
-            payload: {
-                inputName: evt.target.name,
-                inputValue: evt.target.value
-            }
-        });
+    const handleChange = (name: string, value: string | number | null | undefined) => {
+        if (value !== null && value !== undefined) {
+            dispatch({
+                type: "change_value",
+                payload: {
+                    inputName: name,
+                    inputValue: value
+                }
+            });
+        }
     };
 
     const handleClear = () => {
@@ -74,54 +113,95 @@ const Form = ({ onNewUser: onNewUser }: FormProps) => {
     };
 
     return (
-        <div className={styles.formContainer}>
-            <form onSubmit={handleSubmit} className={styles.form}>
-                <div className={styles.formGroup}>
-                    <label htmlFor="name" className={styles.label}>Name</label>
-                    <input
-                        onChange={handleChange}
-                        value={inputValues.name}
-                        type='text'
-                        name="name"
-                        id="name"
-                        placeholder="Enter your name"
-                        className={styles.input}
-                    />
-                </div>
-                <div className={styles.formGroup}>
-                    <label htmlFor="age" className={styles.label}>Age</label>
-                    <input
-                        onChange={handleChange}
-                        value={inputValues.age || ''}
-                        type='number'
-                        name="age"
-                        id="age"
-                        placeholder="Enter your age"
-                        className={styles.input}
-                    />
-                </div>
-                <div className={styles.formGroup}>
-                    <label htmlFor="email" className={styles.label}>Email</label>
-                    <input
-                        onChange={handleChange}
-                        value={inputValues.email}
-                        type='email'
-                        name="email"
-                        id="email"
-                        placeholder="Enter your email"
-                        className={styles.input}
-                    />
-                </div>
-                <div className={styles.buttonGroup}>
-                    <button type="button" onClick={handleClear} className={styles.button}>
-                        Clear
-                    </button>
-                    <button type="submit" className={styles.button}>
-                        Submit
-                    </button>
-                </div>
-            </form>
-        </div>
+        <>
+            <IonToast
+                isOpen={showToast}
+                onDidDismiss={() => setShowToast(false)}
+                message={toastMessage}
+                duration={3000}
+                position="top"
+                color={toastColor}
+                icon={toastColor === 'success' ? checkmarkCircle : alertCircle}
+            />
+            
+            <IonCard className="ion-margin-top">
+                <IonCardHeader color="tertiary">
+                    <IonCardTitle>
+                        <IonIcon icon={personAdd} className="ion-margin-end" />
+                        Afegir Nou Usuari
+                    </IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>
+                    <form onSubmit={handleSubmit}>
+                        <IonItem className="ion-margin-bottom">
+                            <IonIcon icon={personAdd} slot="start" color="primary" />
+                            <IonLabel position="floating">Nom <IonText color="danger">*</IonText></IonLabel>
+                            <IonInput
+                                value={inputValues.name}
+                                onIonChange={(e) => handleChange("name", e.detail.value!)}
+                                type="text"
+                                name="name"
+                                placeholder="Introdueix el teu nom"
+                            />
+                        </IonItem>
+                        
+                        <IonItem className="ion-margin-bottom">
+                            <IonIcon icon={todayOutline} slot="start" color="primary" />
+                            <IonLabel position="floating">Edat <IonText color="danger">*</IonText></IonLabel>
+                            <IonInput
+                                value={inputValues.age || ''}
+                                onIonChange={(e) => {
+                                    const value = e.detail.value ? parseInt(e.detail.value) : 0;
+                                    handleChange("age", value);
+                                }}
+                                type="number"
+                                name="age"
+                                placeholder="Introdueix la teva edat"
+                            />
+                        </IonItem>
+                        
+                        <IonItem className="ion-margin-bottom">
+                            <IonIcon icon={mailOutline} slot="start" color="primary" />
+                            <IonLabel position="floating">Email <IonText color="danger">*</IonText></IonLabel>
+                            <IonInput
+                                value={inputValues.email}
+                                onIonChange={(e) => handleChange("email", e.detail.value!)}
+                                type="email"
+                                name="email"
+                                placeholder="Introdueix el teu email"
+                            />
+                        </IonItem>
+                        
+                        <IonGrid>
+                            <IonRow className="ion-margin-top">
+                                <IonCol>
+                                    <IonButton 
+                                        expand="block" 
+                                        fill="outline" 
+                                        onClick={handleClear} 
+                                        type="button"
+                                        color="medium"
+                                    >
+                                        <IonIcon slot="start" icon={refreshOutline} />
+                                        Netejar
+                                    </IonButton>
+                                </IonCol>
+                                <IonCol>
+                                    <IonButton 
+                                        expand="block" 
+                                        type="submit"
+                                        color="tertiary"
+                                    >
+                                        <IonIcon slot="start" icon={saveOutline} />
+                                        Desar
+                                    </IonButton>
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
+                    </form>
+                </IonCardContent>
+            </IonCard>
+        </>
     );
 };
 
