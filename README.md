@@ -1,3 +1,7 @@
+# Referències
+Material de l'assignatura
+El meu repo de prova del seminari que vaig fer abans
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

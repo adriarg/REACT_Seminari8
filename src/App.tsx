@@ -16,7 +16,8 @@ interface AppState {
 interface UIState {
     isDarkMode: boolean;
     showNotification: boolean;
-    newUserName: string;
+    notificationMessage: string;
+    notificationType: 'create' | 'update';
 }
 
 function App() {
@@ -28,21 +29,23 @@ function App() {
     const [uiState, setUiState] = useState<UIState>({
         isDarkMode: false,
         showNotification: false,
-        newUserName: '',
+        notificationMessage: '',
+        notificationType: 'create'
     });
 
-    const divRef = useRef<HTMLDivElement>(null); // Mantenemos el useRef como ejemplo
+    const divRef = useRef<HTMLDivElement>(null);
+
+    const loadUsers = async () => {
+        try {
+            const fetchedUsers = await fetchUsers();
+            setUsers(fetchedUsers);
+        } catch (error) {
+            console.error('Error loading users:', error);
+            setUsers([]);
+        }
+    };
 
     useEffect(() => {
-        const loadUsers = async () => {
-            try {
-                const fetchedUsers = await fetchUsers();
-                setUsers(fetchedUsers);
-            } catch (error) {
-                console.error('Error loading users:', error);
-                setUsers([]);
-            }
-        };
         if (isLoggedIn) {
             loadUsers();
         }
@@ -64,21 +67,29 @@ function App() {
         setNewUsersNumber((n) => n + 1);
         setUiState((prev) => ({
             ...prev,
-            newUserName: newUser.name,
+            notificationMessage: newUser.name,
             showNotification: true,
+            notificationType: 'create'
+        }));
+    };
+
+    const handleUserUpdated = async () => {
+        await loadUsers();
+        setUiState((prev) => ({
+            ...prev,
+            showNotification: true,
+            notificationMessage: 'User updated successfully!',
+            notificationType: 'update'
         }));
     };
 
     const toggleDarkMode = () => {
         setUiState((prev) => {
             const newMode = !prev.isDarkMode;
-
-            // Ejemplo de uso de useRef para cambiar estilos directamente
             if (divRef.current) {
                 divRef.current.style.backgroundColor = newMode ? '#333333' : '#ffffff';
                 divRef.current.style.color = newMode ? '#ffffff' : '#000000';
             }
-
             return { ...prev, isDarkMode: newMode };
         });
     };
@@ -97,10 +108,13 @@ function App() {
 
     return (
         <div className="App" ref={divRef}>
-            {/* Notification Popup */}
             {uiState.showNotification && (
                 <div className={`notification ${uiState.isDarkMode ? 'dark' : 'light'}`}>
-                    User <strong>{uiState.newUserName}</strong> has been created successfully!
+                    {uiState.notificationType === 'create' ? (
+                        <>User <strong>{uiState.notificationMessage}</strong> has been created successfully!</>
+                    ) : (
+                        uiState.notificationMessage
+                    )}
                 </div>
             )}
 
@@ -116,7 +130,10 @@ function App() {
                 ) : (
                     <>
                         <h2>Bienvenido, {currentUser?.name}!</h2>
-                        <UsersList users={users} />
+                        <UsersList 
+                            users={users} 
+                            onUserUpdated={handleUserUpdated}
+                        />
                         <p>New users: {newUsersNumber}</p>
                         <Form onNewUser={handleNewUser} />
                     </>
