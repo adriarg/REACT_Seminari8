@@ -1,6 +1,6 @@
 # Referències
-Material de l'assignatura
-El meu repo de prova del seminari que vaig fer abans
+- Material de l'assignatura
+- El meu repo de prova del seminari que vaig fer abans
 
 # Getting Started with Create React App
 
